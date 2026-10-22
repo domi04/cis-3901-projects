@@ -5,7 +5,7 @@ author: "Your Name"
 
 This site holds my reports and slides for the CIS-3901 Challenge Projects (Fairness Data and Sports Data).
 
-Replace `Your Name` and this paragraph with your own.
+Dominic Rueck
 
 - **Reports:** [Fairness Data report](reports/fairness_report.qmd) · [Sports Data report](reports/sports_report.qmd)
 - **Slides:** [Fairness Data slides](presentations/fairness_slides.qmd) · [Sports Data slides](presentations/sports_slides.qmd)
