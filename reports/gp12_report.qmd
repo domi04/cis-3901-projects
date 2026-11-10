@@ -1,0 +1,282 @@
+---
+title: "Guided Project: Statistical Transformations and Coordinate Systems"
+subtitle: "CIS-3901 · Module 12"
+author: "Dominic Rueck"
+date: today
+format:
+  html:
+    toc: true
+    code-fold: false
+    embed-resources: true
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+```{r}
+#| label: project-root
+#| include: false
+# The report runs from reports/; this makes the code run from the project
+# folder, so the script's paths (data/...) work here too.
+knitr::opts_knit$set(root.dir = normalizePath(".."))
+```
+
+```{r}
+#| label: read-script
+#| include: false
+# All the code lives in the script. Each empty chunk below takes the code
+# with that "## ---- name ----" label there, and shows it with its output.
+knitr::read_chunk("scripts/gp12_stats_coords.R")
+```
+
+```{r}
+#| label: setup
+#| include: false
+```
+
+```{r}
+#| label: helpers
+#| include: false
+```
+
+```{=html}
+<!--
+How to use this template
+- Replace every line that starts with "WRITE:" with your own sentences.
+- Replace "Your Name" above (a first name or initials is fine: this page is
+  public).
+- Replace each fig-alt with one sentence describing what YOUR plot shows.
+- Render, then commit and push (Guided Project page, step 5).
+-->
+```
+
+## My data
+
+**Fairness: Diabetes Hospital**. Each row is one hospital encounter. There are 5,000 rows.
+**Sports: Setka Cup table tennis**. Each row is one match between two players. There are 10,000 rows.
+
+```{r}
+#| label: data
+#| echo: true
+```
+
+## Part A · Fairness
+
+**My group:** Age **My outcome:** time_in_hospital \>= 5.
+
+**Question A:** "Of each age group, what share has the outcome of
+time_in_hospital \>= 5?" **Question B:** "Of everyone with
+time_in_hospital \>= 5, what share is each age group?"
+
+### A0 · My group and my outcome
+
+```{r}
+#| label: a0
+#| echo: true
+```
+
+```{r}
+#| label: a0-check
+#| include: false
+```
+
+### A1 · The rate within each group (question A)
+
+```{r}
+#| label: fig-a1
+#| ref.label: a1
+#| echo: true
+#| fig-cap: "Share of each group with the outcome."
+#| fig-alt: "This plot shows that people over 60 have the highest share of time_in_hospital >= 5, while people under 30 have the lowest share. People betwen 30 and 60 years sit in between."
+```
+
+```{r}
+#| label: a1-check
+#| include: false
+```
+
+I would guess that older people would have a longer time in the hospital, so I expect the highest rate to be in the older age groups. The plot shows that people over 60 have the highest share of time_in_hospital >= 5, while people under 30 have the lowest share. People between 30 and 60 years sit in between. This makes groups of different sizes comparable because it brings all groups to the same scale instead of being different just because there is more people in one group or the other.
+
+### A2 · Rates with their standard error
+
+```{r}
+#| label: fig-a2
+#| ref.label: a2
+#| echo: true
+#| fig-cap: "Rate in each group, with ± one standard error and the group size."
+#| fig-alt: "The plot shows that the share of people with more than 5 days in the hospital increases with age, with older age groups experiencing a notably higher rate and larger sample sizes than younger groups."
+```
+
+```{r}
+#| label: a2-check
+#| include: false
+```
+
+The youngest group has the widest range. It tells the reader that even though the group is small, it has a high variability in th e outcome. One or two outliers can already have a significant impact on the results.
+
+### A3 · Zoom or filter?
+
+```{r}
+#| label: fig-a3
+#| ref.label: a3
+#| echo: true
+#| fig-cap: "Counts per group: from 0, zoomed and filtered."
+#| fig-subcap: ["From 0", "Zoomed", "Filtered"]
+#| fig-alt: "The three plots differ by their x-axis scales. The first plot shows the full range of counts, while the second plot zooms in on a specific range, and the third plot filters out certain data points to focus on a subset of the data."
+#| layout: [[1, 1, 1]]
+```
+
+```{r}
+#| label: a3-check
+#| include: false
+```
+
+The zoomed plot's Lie Factor (largest vs smallest group) is
+`r round(a3_lie_factor, 1)`.
+
+The first version shows the full picture with a normal scale and the whole x axis is shown from 0 up to a little more than the biggest group has. The second plot starts just slightly above the amount of the smallest group. This makes the smallest group look even less represented and is quite misleading. The third plot filters out all of the data and is therefore empty.
+
+### A4 · Each group's share of everyone with the outcome (question B)
+
+```{r}
+#| label: fig-a4
+#| ref.label: a4
+#| echo: true
+#| fig-cap: "Each group's share of everyone with the outcome."
+#| fig-alt: "This plot shows the shares of the three age groups among all individuals who have the outcome of time_in_hospital >= 5. The oldest age group has the largest share, while the youngest age group has the smallest share."
+```
+
+```{r}
+#| label: a4-check
+#| include: false
+```
+
+They do point in the same direction since the plots always confirm each other. Already in the beginning, the oldest group stood out which was then confirmed throughout.
+
+## Part B · Sports
+
+**My group, outcome and value:** group = the number of of sets played in the match, outcome = the home player won, value = the total points sccored in game 1.
+
+### B0 · My group, outcome and value
+
+```{r}
+#| label: b0
+#| echo: true
+```
+
+```{r}
+#| label: b0-check
+#| include: false
+```
+
+### B1 · The rate within each group
+
+```{r}
+#| label: fig-b1
+#| ref.label: b1
+#| echo: true
+#| fig-cap: "Share of each group with the outcome."
+#| fig-alt: "Bars show matches of 3, 4, and 5 sets split into home wins or losses. All three bars are split almost exactly in half."
+```
+
+```{r}
+#| label: b1-check
+#| include: false
+```
+
+The home player won about 50% of the matches (50.1%) in the 3-set matches, 49.5% in the 4-set matches, and 49.4% in the 5-set matches, so the link of the matches shows almost no connection to who wins. I use shares because the groups are of different sizes and it makes them comparable.
+
+### B2 · A mean with its two spreads
+
+```{r}
+#| label: fig-b2
+#| ref.label: b2
+#| echo: true
+#| fig-cap: "Mean in each group, with ± one standard error and group size."
+#| fig-alt: "Mean points in game 1 for matches with 3, 4, or 5 sets, with error bars showing ± one standard error."
+```
+
+```{r}
+#| label: b2-check
+#| include: false
+```
+
+```{r}
+#| label: tbl-b2
+#| tbl-cap: "Group size, mean, sd and se."
+#| echo: false
+knitr::kable(b2_summary, digits = 3)
+```
+
+The mean of game 1 is about 18.5 points for 3-set matches and about 18.8
+points for 4- and 5-set matches, a gap of about 0.3 points. This gap is
+large compared to the se (each bar is only about ±0.06 points wide, and the
+3-set bar does not overlap the other two), so it is unlikely to be just
+sampling noise. We should take from this that there is a small, fairly clear
+difference between the averages, not a difference that would let anyone
+predict the length of a match from its first game.
+
+
+### B3 · Zoom or filter?
+
+```{r}
+#| label: fig-b3
+#| ref.label: b3
+#| echo: true
+#| fig-cap: "Counts per group: zoomed and filtered."
+#| fig-subcap: ["Zoomed", "Filtered"]
+#| fig-alt: "Two plots of match counts for 3, 4 and 5 sets: the zoomed plot starts at 1,203 and exaggerates the differences; the filtered plot is empty."
+#| layout: [[1, 1]]
+```
+
+```{r}
+#| label: b3-check
+#| include: false
+```
+
+The Lie Factor of your zoomed plot is `r round(b3_lie_factor, 2)`. The zoomed plot makes the 4 matches seem much more common than the other two even though they are pretty close. The filtered version removes the bars completely because they start at 0, which is outside of the limits.
+
+### B4 · Each group's share of everyone with the outcome
+
+```{r}
+#| label: fig-b4
+#| ref.label: b4
+#| echo: true
+#| fig-cap: "Each group's share of everyone with the outcome."
+#| fig-alt: "Each groups share of all home wins."
+```
+
+```{r}
+#| label: b4-check
+#| include: false
+```
+
+B4 does not point in the same direction as B1. B1 shows almost no difference while B4 shows that 4-set matches have the largest share. This is more likely because there are more 4-set matches in total, so they make up the biggest part of the home wins just because they are the biggest group.
+
+## Checks
+
+```{r}
+#| label: checks-table
+#| include: false
+```
+
+```{r}
+#| label: tbl-checks
+#| tbl-cap: "Every task's check, at the time this page was rendered."
+#| echo: false
+knitr::kable(checks_table)
+```
+
+## AI use
+
+No AI used.
+
+## References
+
+**Fairness:** Clore, J., Cios, K., DeShazo, J., & Strack, B. (2014). Diabetes 130-US Hospitals for Years 1999-2008 [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C5230J.
+
+**Sports:** Cassidy, G. (2024, July 17). Setka table tennis dataset – SCORE sports data repository. Scorenetwork.Org. https://data.scorenetwork.org/table_tennis/table_tennis_sept2022.html
