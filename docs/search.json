@@ -257,5 +257,145 @@
     "title": "Guided Project: Statistical Transformations and Coordinate Systems",
     "section": "References",
     "text": "References\nFairness: Clore, J., Cios, K., DeShazo, J., & Strack, B. (2014). Diabetes 130-US Hospitals for Years 1999-2008 [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C5230J.\nSports: Cassidy, G. (2024, July 17). Setka table tennis dataset – SCORE sports data repository. Scorenetwork.Org. https://data.scorenetwork.org/table_tennis/table_tennis_sept2022.html"
+  },
+  {
+    "objectID": "reports/gp13_report.html",
+    "href": "reports/gp13_report.html",
+    "title": "Guided Project: Scales and Facets",
+    "section": "",
+    "text": "ImportantEdit the code in the script. The report and the slides only read it.\n\n\n\nThe code lives in scripts/gp13_scales_facets.R. Your words (findings, headlines, limits) live in the report and the slides. Keep the code chunks here empty: on render, each one runs the script’s code, so code typed into them is ignored. Fix the code in the script."
+  },
+  {
+    "objectID": "reports/gp13_report.html#my-data",
+    "href": "reports/gp13_report.html#my-data",
+    "title": "Guided Project: Scales and Facets",
+    "section": "My data",
+    "text": "My data\nFairness: Diabetes Hospital. Each row is one hospital encounter. There are 5,000 rows. Sports: Setka Cup table tennis. Each row is one match between two players. There are 10,000 rows.\n\nput_in_place(\"fairness.csv\")\nput_in_place(\"sports.csv\")\n\nfairness &lt;- read_csv(\"data/fairness.csv\", show_col_types = FALSE)\nsports &lt;- read_csv(\"data/sports.csv\", show_col_types = FALSE)\n\nif (looks_damaged(fairness) || looks_damaged(sports)) {\n  stop(\"One of your data files looks damaged (each row in one column): it \",\n       \"may have been re-saved by a spreadsheet app. Ask your instructor \",\n       \"for a fresh copy.\", call. = FALSE)\n}\n\n# Your columns (\"values\" = how many different values: 2 to 4 suits\n# task 5). Never put a column of people's names in a plot.\nshow_columns(fairness)\n\n# A tibble: 22 × 4\n   column              type      values missing\n   &lt;chr&gt;               &lt;chr&gt;      &lt;int&gt;   &lt;int&gt;\n 1 encounter_id        numeric     5000       0\n 2 race                character      6       0\n 3 gender              character      3       0\n 4 age                 character      3       0\n 5 time_in_hospital    numeric       14       0\n 6 num_lab_procedures  numeric       99       0\n 7 num_procedures      numeric        7       0\n 8 num_medications     numeric       63       0\n 9 number_diagnoses    numeric       11       0\n10 primary_diagnosis   character      5       0\n11 max_glu_serum       character      4       0\n12 A1Cresult           character      4       0\n13 insulin             character      4       0\n14 change              character      2       0\n15 diabetesMed         character      2       0\n16 medicare            logical        2       0\n17 medicaid            logical        2       0\n18 had_emergency       logical        2       0\n19 had_inpatient_days  logical        2       0\n20 had_outpatient_days logical        2       0\n21 readmitted          character      3       0\n22 readmit_30_days     numeric        2       0\n\nshow_columns(sports)\n\n# A tibble: 18 × 4\n   column     type      values missing\n   &lt;chr&gt;      &lt;chr&gt;      &lt;int&gt;   &lt;int&gt;\n 1 X          numeric     7851       0\n 2 Date       character     29       0\n 3 Time       hms          262       0\n 4 Player1    character    551       0\n 5 Player2    character    544       0\n 6 Sets_P1    numeric        4       0\n 7 Sets_P2    numeric        4       0\n 8 P1_G1      numeric       22       0\n 9 P2_G1      numeric       23       0\n10 P1_G2      numeric       22       0\n11 P2_G2      numeric       22       0\n12 P1_G3      numeric       22       0\n13 P2_G3      numeric       21       0\n14 P1_G4      numeric       24    2403\n15 P2_G4      numeric       23    2403\n16 P1_G5      numeric       22    5333\n17 P2_G5      numeric       20    5333\n18 HomeWinner numeric        2       0\n\n# PART A · FAIRNESS ==========================================================\n\n# A0 · See it update ---------------------------------------------------------\n# A ready count plot of one of your Fairness columns. Nothing to code.\n# YOUR TURN (kickoff): change one word in the title, then render the report\n# and the slides, and find your word on both pages."
+  },
+  {
+    "objectID": "reports/gp13_report.html#part-a-fairness",
+    "href": "reports/gp13_report.html#part-a-fairness",
+    "title": "Guided Project: Scales and Facets",
+    "section": "Part A · Fairness",
+    "text": "Part A · Fairness\n\nA0 · See it update\n\na0_column &lt;- pick_a_column(fairness)\n\na0 &lt;- ggplot(fairness, aes(y = .data[[a0_column]])) +\n  geom_bar() +\n  labs(title = \"Not my first plot\", x = \"Count\", y = a0_column)\n\nshow_plot(a0)\n\n\n\n\n\n\n\nFigure 1: My first plot: a count of one of my Fairness columns.\n\n\n\n\n\nYes, I changed one word in the title of a0 in the script, and the new title shows up both here and in my slides.\n\n\nA1 · Label it\n\na_data &lt;- fairness %&gt;%\n  mutate(\n    group = age,\n    has_outcome = time_in_hospital &gt;= 5\n  )\n\na_data %&gt;%\n  count(group, has_outcome) %&gt;%\n  print(n = Inf)\n\n# A tibble: 6 × 3\n  group               has_outcome     n\n  &lt;chr&gt;               &lt;lgl&gt;       &lt;int&gt;\n1 30 years or younger FALSE         106\n2 30 years or younger TRUE           35\n3 30-60 years         FALSE        1012\n4 30-60 years         TRUE          499\n5 Over 60 years       FALSE        1962\n6 Over 60 years       TRUE         1386\n\na1_base &lt;- ggplot(a_data, aes(y = group, fill = has_outcome)) +\n  geom_bar(position = \"fill\") +\n  labs(x = \"Share of the group\", y = NULL, fill = \"Has the outcome\")\n\na1 &lt;- a1_base +\n  labs(\n    title = \"Longer hospital stays are more common in older age groups \",\n    subtitle = \"From the Diabetes Hospital encounters dataset\",\n    x = \"Share of the age group in %\",\n    y = \"Age Group\",\n    fill = \"Stay of 5+ days\"\n  ) +\n  scale_x_continuous(labels = scales::percent)\n\nshow_plot(a1)\n\n\n\n\n\n\n\nFigure 2: Share of each group with the outcome, labeled for a reader.\n\n\n\n\n\nI changed the title most. The first version only named the topic, and now it says what a reader can see in the plot. The subtitle names the data, and the axis and legend titles explain the share and the outcome (a stay of 5 or more days), so a reader can understand the plot without me there.\n\n\nA2 · Choose a scale\n\na2 &lt;- NULL\n# YOUR TURN: remove the # signs below, then replace each ___.\na2 &lt;- fairness %&gt;%\n  filter(time_in_hospital &gt; 0) %&gt;%\n  ggplot(aes(x = time_in_hospital)) +\n  geom_histogram(bins = 14, color = \"black\") +\n  scale_y_log10(labels = scales::comma) +\n  labs(title = \"Most hospital stays are short and only a few last two weeks\",\n       x = \"Time in hospital (days)\",\n       y = \"Number of encounters (log scale)\")\n\n\n# YOUR TURN: one sentence. Why this scale for this column?\na2_reason &lt;- \"Time in hospital is right-skewed, with many short stays and a few long ones, so a log scale represents this data better. \"\n\nshow_plot(a2)\n\n\n\n\n\n\n\nFigure 3: My scale choice.\n\n\n\n\n\nI used a log scale on the y-axis (the number of encounters) because the stay lengths are right-skewed: short stays are common and long ones are rare. With the log scale a reader can see that even the rare long stays (about 45 encounters at 14 days) are present next to the common ones (about 870 at 3 days). The trade-off is that the bars start at 1 instead of 0, so their lengths no longer show the counts directly, and a linear scale shows the skew more clearly. No values were removed by the filter (0 rows had a stay of 0 days or less).\n\n\nA3 · Facet it: fixed or free\n\n# YOUR TURN 1: replace \"replace me\" with your second column (no quotes).\na3_rates &lt;- a_data %&gt;%\n  mutate(panel = race) %&gt;%\n  drop_na(has_outcome) %&gt;%\n  add_count(panel, name = \"panel_n\") %&gt;%\n  mutate(panel = paste0(panel, \" (n = \", scales::comma(panel_n), \")\")) %&gt;%\n  group_by(panel, group) %&gt;%\n  summarize(n = n(), rate = mean(has_outcome), .groups = \"drop\")\n\na3_fixed &lt;- NULL\na3_free &lt;- NULL\n# YOUR TURN 2: remove the # signs below, then replace each ___.\na3_fixed &lt;- ggplot(a3_rates, aes(x = group, y = rate)) +\n  geom_col() +\n  facet_wrap(vars(panel)) +\n  scale_x_discrete(labels = scales::label_wrap(10)) +\n  scale_y_continuous(labels = scales::percent) +\n  labs(title = \"Share with a stay of 5+ days, by age group and race\",\n       x = \"Age group\", y = \"Share of the group (%)\")\na3_free &lt;- a3_fixed +\n  facet_wrap(vars(panel), scales = \"free_y\")\n\n\n# YOUR TURN 3: which one would you publish, \"fixed\" or \"free_y\"? Why?\na3_choice &lt;- \"fixed\"\na3_reason &lt;- \"With the same y-axis in every panel, a reader can compare the rates across panels more easily and is not overwhelmed with information. Also, the smaller panels are not stretched to look as important as the big ones.\"\n\nshow_plot(a3_fixed)\nshow_plot(a3_free)\n\n\n\n\n\n\n\n\n\n\n\n(a) Fixed\n\n\n\n\n\n\n\n\n\n\n\n(b) Free\n\n\n\n\n\n\n\nFigure 4: The same rates in panels: fixed and free y-axes.\n\n\n\n\n\n\n\n\nTable 1: Each group’s n and rate, by panel.\n\n\n\n\n\n\npanel\ngroup\nn\nrate\n\n\n\n\nAfricanAmerican (n = 944)\n30 years or younger\n48\n0.354\n\n\nAfricanAmerican (n = 944)\n30-60 years\n409\n0.377\n\n\nAfricanAmerican (n = 944)\nOver 60 years\n487\n0.431\n\n\nAsian (n = 31)\n30-60 years\n6\n0.333\n\n\nAsian (n = 31)\nOver 60 years\n25\n0.440\n\n\nCaucasian (n = 3,737)\n30 years or younger\n88\n0.205\n\n\nCaucasian (n = 3,737)\n30-60 years\n987\n0.317\n\n\nCaucasian (n = 3,737)\nOver 60 years\n2662\n0.411\n\n\nHispanic (n = 100)\n30 years or younger\n2\n0.000\n\n\nHispanic (n = 100)\n30-60 years\n47\n0.298\n\n\nHispanic (n = 100)\nOver 60 years\n51\n0.353\n\n\nOther (n = 75)\n30 years or younger\n2\n0.000\n\n\nOther (n = 75)\n30-60 years\n25\n0.280\n\n\nOther (n = 75)\nOver 60 years\n48\n0.312\n\n\nUnknown (n = 113)\n30 years or younger\n1\n0.000\n\n\nUnknown (n = 113)\n30-60 years\n37\n0.243\n\n\nUnknown (n = 113)\nOver 60 years\n75\n0.507\n\n\n\n\n\n\n\n\nI chose fixed axes. With the same y-axis in every panel, a reader can compare the races directly, and a small panel is not stretched to look as important as a large one. With free axes the reader gains more detail in each panel but loses the direct comparison, because the same bar height means different rates in different panels.\n\n\nA4 · Compared to what?\n\na4_clouds &lt;- NULL\n# YOUR TURN 1: remove the # signs below, then replace each ___: the column\n# with your groups, two of its values, and your numeric column.\na4_clouds &lt;- a_data %&gt;%\n  filter(gender %in% c(\"Female\", \"Male\")) %&gt;%\n  make_clouds(gender, num_medications)\n\na4 &lt;- NULL\n# YOUR TURN 2: remove the # signs below, then replace each ___.\na4 &lt;- ggplot(a4_clouds, aes(x = group, y = value)) +\n  geom_jitter(width = 0.15, height = 0, alpha = 0.2) +\n  facet_wrap(~ kind) +\n  labs(title = \"Lab procedures per encounter: individuals versus group means\",\n       x = \"Gender\", y = \"Lab procedures (count)\")\n\nshow_plot(a4)\n\n\n\n\n\n\n\nFigure 5: Two groups: individual values and resampled means, same axes.\n\n\n\n\n\nI chose the number of lab procedures per encounter, because it is a count with a wide spread. The individual values of the two genders overlap almost completely, from about 1 to 70 procedures, while the 200 resampled means form narrow bands around 16 that sit only slightly apart. This means the group means are measured precisely, but the gap between them is small compared with the differences between single encounters, so knowing the gender says very little about one encounter. I left out the 2 encounters with unknown gender, because a resampled mean of 2 values would not mean much.\n\n\nA5 · Color for every reader\na5 &lt;- NULL\n# YOUR TURN: remove the # signs below, then replace each ___ (the same\n# column in both places, so its name is on the axis too).\na5 &lt;- ggplot(a_data, aes(y = age, fill = age)) +\n  geom_bar() +\n  scale_fill_viridis_d(end = 0.8) +\n  labs(title = \"Encounters by age\", x = \"Count\", y = \"Age group\", fill = \"Age group\")\n\nshow_plot(a5)\n# See it: your plot as a reader with red-green color blindness might see it.\nshow_plot(simulate_plot(a5, \"Red-green (deuteranopia)\"))\n\n\n\n\n\n\n\n\n\n\n\n(a) My plot\n\n\n\n\n\n\n\n\n\n\n\n(b) Red-green (deuteranopia), simulated\n\n\n\n\n\n\n\nFigure 6: My colors, with a second cue, and how a reader with red-green color blindness might see them.\n\n\n\n\ncolor_check(a5)\n\n3 colors. The red-green simulations come from a validated model;\nthe blue-yellow one is an approximation.\n\n\n# A tibble: 3 × 3\n  view                      smallest_difference at_least_20\n  &lt;chr&gt;                                   &lt;dbl&gt; &lt;chr&gt;      \n1 Red-green (deuteranopia)                 30.5 Yes        \n2 Red-green (protanopia)                   41.1 Yes        \n3 Blue-yellow (approximate)                29.7 Yes        \n\n\nshow_plot(simulate_plot(a5, \"Red-green (protanopia)\"))\nshow_plot(simulate_plot(a5, \"Blue-yellow (approximate)\"))\n\n\n\n\n\n\n\n\n\n\n\n(a) Red-green (protanopia), simulated\n\n\n\n\n\n\n\n\n\n\n\n(b) Blue-yellow (approximate), simulated\n\n\n\n\n\n\n\nFigure 7: The other two simulated views.\n\n\n\nI colored the bars by age group, which has only three categories, so every group can get its own color from the viridis scale. The age group is also on the y-axis, so color is never the only cue. In the simulated plots I can still tell the three bars apart, and the labels on the y-axis tell me which is which."
+  },
+  {
+    "objectID": "reports/gp13_report.html#part-b-sports",
+    "href": "reports/gp13_report.html#part-b-sports",
+    "title": "Guided Project: Scales and Facets",
+    "section": "Part B · Sports",
+    "text": "Part B · Sports\n\nB1 · Label it\n\nb_data &lt;- sports %&gt;%\n  mutate(\n    group = factor(Sets_P1 + Sets_P2),\n    has_outcome = HomeWinner == 1,\n    value = P1_G1 + P2_G1\n  )\n\nb1_base &lt;- ggplot(b_data, aes(y = group, fill = has_outcome)) +\n  geom_bar(position = \"fill\") +\n  scale_x_continuous(labels = scales::percent) +\n  labs(x = \"Share of the group\", y = \"Sets played\", fill = \"Home player won\")\n\nb1 &lt;- b1_base +\n  labs(\n    title = \"The home player wins about half of all matches, however long they last\",\n    subtitle = \"From the Setka Cup table tennis matches dataset\",\n    x = \"Share of matches (%)\",\n    y = \"Home player won\"\n  )\n\nshow_plot(b1)\n\n\n\n\n\n\n\nFigure 8: My Sports plot, labeled for a reader.\n\n\n\n\n\nThe plot shows that the home player won about 50% of the matches in every group, whether the match lasted 3, 4 or 5 sets. The title helps a reader most, because it states this finding instead of only naming the columns.\n\n\nB2 · Choose a scale\n\nb2 &lt;- b_data %&gt;%\n  filter(value &gt; 0) %&gt;%\n  ggplot(aes(x = value)) +\n  geom_histogram(bins = 25, color = \"black\") +\n  scale_y_log10(labels = scales::comma) +\n  labs(title = \"Points in game 1: most games end near 18, a few run much longer\",\n       subtitle=\"The bars that fall below 1 are bins with just 1 observation\",\n       x = \"Points in game 1 (both players)\", y = \"Matches (log scale)\")\n\nb2_reason &lt;- \"The points in game 1 are right-skewed, with many games ending near 18 points and a few running much longer, so a log scale represents this data better without making the shorter data points seem extremely large.\"\n\nshow_plot(b2)\n\n\n\n\n\n\n\nFigure 9: My scale choice.\n\n\n\n\n\nused a log scale on the y-axis (the number of matches). The points in game 1 are right-skewed: most games end near 18 points, and a few long games with many deuces run much higher, up to 44 points. On a linear count axis the bars for the rare long games would be almost invisible next to the tall bars near 18. The log scale makes these rare games visible, and it does not make the common short games look extremely large. The trade-off is that the bars on a log axis no longer show the counts directly, and bins with only 1 match have a bar of length zero, which is why some bars seem to be missing (the subtitle explains this). No values were removed, because every game has at least 11 points (0 rows removed).\n\n\nB3 · Facet it: fixed or free\n\nb3_fixed &lt;- NULL\nb3_free &lt;- NULL\n\nb3_rates &lt;- b_data %&gt;%\n  mutate(panel = if_else(HomeWinner == 1, \"Home player won\", \"Away player won\")) %&gt;%\n  add_count(panel, name = \"panel_n\") %&gt;%\n  mutate(panel = paste0(panel, \" (n = \", scales::comma(panel_n), \")\")) %&gt;%\n  group_by(panel, group) %&gt;%\n  summarize(n = n(), mean_points = mean(value), .groups = \"drop\")\n\nb3_fixed &lt;- ggplot(b3_rates, aes(x = group, y = mean_points)) +\n  geom_col() +\n  facet_wrap(vars(panel)) +\n  labs(title = \"Mean points in game 1, by sets played and who won\",\n       x = \"Sets played\", y = \"Mean points in game 1\")\nb3_free &lt;- b3_fixed +\n  facet_wrap(vars(panel), scales = \"free_y\")\n\n\nb3_choice &lt;- \"fixed\"\nb3_reason &lt;- \"Both panels have means between about 18 and 19 points, so free axes give no extra detail, while fixed axes keep the two panels directly comparable and show that who won the match makes almost no difference to game 1.\"\n\nshow_plot(b3_fixed)\nshow_plot(b3_free)\n\n\n\n\n\n\n\n\n\n\n\n(a) Fixed\n\n\n\n\n\n\n\n\n\n\n\n(b) Free\n\n\n\n\n\n\n\nFigure 10: The same plot in panels: fixed and free y-axes.\n\n\n\n\nI chose fixed axes. The two versions look almost the same, because bars start at 0 and all the means are between about 18 and 19 points, so free axes add no detail. Fixed axes keep the two panels directly comparable and show that who won the match makes almost no difference to the mean of game 1. Both panels are large (n = 3,952 for the away player and n = 3,899 for the home player), so there is no small-panel problem here. In both panels the means for 4 and 5 sets are slightly higher than for 3 sets, by a few tenths of a point.\n\n\nB4 · Compared to what?\n\nb4_clouds &lt;- b_data %&gt;%\n  mutate(winner = if_else(HomeWinner == 1, \"Home player won\", \"Away player won\")) %&gt;%\n  make_clouds(winner, value)\n\nb4 &lt;- ggplot(b4_clouds, aes(x = group, y = value)) +\n  geom_jitter(width = 0.15, height = 0, alpha = 0.1) +\n  facet_wrap(~ kind) +\n  labs(title = \"Points in game 1: individual matches versus group means\",\n       x = \"Who won the match\", y = \"Points in game 1 (both players)\")\n\nshow_plot(b4)\n\n\n\n\n\n\n\nFigure 11: Two groups: individual values and resampled means, same axes.\n\n\n\n\n\nThe clouds of the two groups overlap almost completely, both for the individual values and for the resampled means. The individual games range from 11 to 44 points, while the resampled means form narrow bands near 18.7 points. This means the group means are measured precisely, but the difference between them, if there is one, is tiny compared with the differences between single games, so who won the match tells us almost nothing about the points in game 1.\n\n\nB5 · Color for every reader\nb5 &lt;- ggplot(b_data, aes(y = group, fill = group)) +\n  geom_bar() +\n  scale_fill_viridis_d(end = 0.8) +\n  labs(title = \"Matches by number of sets played\", x = \"Matches\",\n       y = \"Sets played\", fill = \"Sets played\")\n\nshow_plot(b5)\nshow_plot(simulate_plot(b5, \"Red-green (deuteranopia)\"))\n\n\n\n\n\n\n\n\n\n\n\n(a) My plot\n\n\n\n\n\n\n\n\n\n\n\n(b) Red-green (deuteranopia), simulated\n\n\n\n\n\n\n\nFigure 12: My colors, with a second cue, and how a reader with red-green color blindness might see them.\n\n\n\n\ncolor_check(b5)\n\n3 colors. The red-green simulations come from a validated model;\nthe blue-yellow one is an approximation.\n\n\n# A tibble: 3 × 3\n  view                      smallest_difference at_least_20\n  &lt;chr&gt;                                   &lt;dbl&gt; &lt;chr&gt;      \n1 Red-green (deuteranopia)                 30.5 Yes        \n2 Red-green (protanopia)                   41.1 Yes        \n3 Blue-yellow (approximate)                29.7 Yes        \n\n\nshow_plot(simulate_plot(b5, \"Red-green (protanopia)\"))\nshow_plot(simulate_plot(b5, \"Blue-yellow (approximate)\"))\n\n\n\n\n\n\n\n\n\n\n\n(a) Red-green (protanopia), simulated\n\n\n\n\n\n\n\n\n\n\n\n(b) Blue-yellow (approximate), simulated\n\n\n\n\n\n\n\nFigure 13: The other two simulated views.\n\n\n\nI colored the bars by the number of sets played, which has three categories (3, 4 and 5), so each can get its own viridis color. The sets are also on the y-axis, so color is not the only cue. In the simulated plots I can still tell the three bars apart."
+  },
+  {
+    "objectID": "reports/gp13_report.html#one-thing-i-tried-in-my-slides-and-why",
+    "href": "reports/gp13_report.html#one-thing-i-tried-in-my-slides-and-why",
+    "title": "Guided Project: Scales and Facets",
+    "section": "One thing I tried in my slides, and why",
+    "text": "One thing I tried in my slides, and why\nI put my headline plot first and said what it shows in the title of the slide, so a reader sees the finding before the details. For the limits, I added one slide that says what the data can and cannot show, for example that the home-win rate says nothing about a real home advantage, because the home player may only be the first-listed player. This helps a reader judge how far to trust the finding."
+  },
+  {
+    "objectID": "reports/gp13_report.html#revision-log",
+    "href": "reports/gp13_report.html#revision-log",
+    "title": "Guided Project: Scales and Facets",
+    "section": "Revision log",
+    "text": "Revision log\n\nFill this in for the final: three to five changes to your report or slides. For each: what changed, why, and which idea from Module 14 it uses.\n\n\n\nChange\nWhy\nModule 14 idea"
+  },
+  {
+    "objectID": "reports/gp13_report.html#checks",
+    "href": "reports/gp13_report.html#checks",
+    "title": "Guided Project: Scales and Facets",
+    "section": "Checks",
+    "text": "Checks\n\n\n\n\nTable 2: Every task’s check, at the time this page was rendered.\n\n\n\n\n\n\ntask\nstatus\n\n\n\n\nA0\nsee the reminder\n\n\nA1\nPASS\n\n\nA2\nPASS\n\n\nA3\nPASS\n\n\nA4\nPASS\n\n\nA5\nPASS\n\n\nB1\nPASS\n\n\nB2\nPASS\n\n\nB3\nPASS\n\n\nB4\nPASS\n\n\nB5\nPASS"
+  },
+  {
+    "objectID": "reports/gp13_report.html#ai-use",
+    "href": "reports/gp13_report.html#ai-use",
+    "title": "Guided Project: Scales and Facets",
+    "section": "AI use",
+    "text": "AI use\nAI use: None"
+  },
+  {
+    "objectID": "reports/gp13_report.html#references",
+    "href": "reports/gp13_report.html#references",
+    "title": "Guided Project: Scales and Facets",
+    "section": "References",
+    "text": "References\nFairness: Clore, J., Cios, K., DeShazo, J., & Strack, B. (2014). Diabetes 130-US Hospitals for Years 1999-2008 [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C5230J.\nSports: Cassidy, G. (2024, July 17). Setka table tennis dataset – SCORE sports data repository. Scorenetwork.Org. https://data.scorenetwork.org/table_tennis/table_tennis_sept2022.html"
+  },
+  {
+    "objectID": "presentations/gp13_slides.html",
+    "href": "presentations/gp13_slides.html",
+    "title": "WRITE: your title",
+    "section": "",
+    "text": "Figure 1"
+  },
+  {
+    "objectID": "presentations/gp13_slides.html#task-0-see-it-update",
+    "href": "presentations/gp13_slides.html#task-0-see-it-update",
+    "title": "Who stays in the hospital for 5 days or more? Diabetes encounters by age and race",
+    "section": "Task 0: see it update",
+    "text": "Task 0: see it update\n\n\n\nFigure 1"
+  },
+  {
+    "objectID": "presentations/gp13_slides.html#question",
+    "href": "presentations/gp13_slides.html#question",
+    "title": "Who stays in the hospital for 5 days or more? Diabetes encounters by age and race",
+    "section": "Question",
+    "text": "Question\n\nOf each age group, what share has a hospital stay of 5 or more days, and does this differ between women and men?"
+  },
+  {
+    "objectID": "presentations/gp13_slides.html#data",
+    "href": "presentations/gp13_slides.html#data",
+    "title": "Who stays in the hospital for 5 days or more? Diabetes encounters by age and race",
+    "section": "Data",
+    "text": "Data\n\n\nFairness: Diabetes Hospital, 1999-2008. One row is one hospital encounter of a patient with diabetes. My file has 5,000 rows.\nSports: Setka Cup table tennis. One row is one match. My file has 7,851 rows."
+  },
+  {
+    "objectID": "presentations/gp13_slides.html#write-your-headline",
+    "href": "presentations/gp13_slides.html#write-your-headline",
+    "title": "WRITE: your title",
+    "section": "WRITE: your headline",
+    "text": "WRITE: your headline\n\n\n\nFigure 2"
+  },
+  {
+    "objectID": "presentations/gp13_slides.html#what-it-shows-and-its-limits",
+    "href": "presentations/gp13_slides.html#what-it-shows-and-its-limits",
+    "title": "Who stays in the hospital for 5 days or more? Diabetes encounters by age and race",
+    "section": "What it shows, and its limits",
+    "text": "What it shows, and its limits\n\nThe share of long stays differs by age group, and the pattern looks the same for all of the races. This describes a difference, not a cause.\nA stay of 5 or more days is my own cutoff, and the data cover US hospitals from 1999 to 2008, so they say nothing about today.\nIn the Sports data, “home player” probably only means the first-listed player, so a 50% win rate is not evidence for a real home advantage."
+  },
+  {
+    "objectID": "presentations/gp13_slides.html#sources-and-ai-use",
+    "href": "presentations/gp13_slides.html#sources-and-ai-use",
+    "title": "Who stays in the hospital for 5 days or more? Diabetes encounters by age and race",
+    "section": "Sources and AI use",
+    "text": "Sources and AI use\n\nFairness: Clore, J., Cios, K., DeShazo, J., & Strack, B. (2014). Diabetes 130-US Hospitals for Years 1999-2008 [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C5230J.\nSports: Cassidy, G. (2024, July 17). Setka table tennis dataset – SCORE sports data repository. Scorenetwork.Org. https://data.scorenetwork.org/table_tennis/table_tennis_sept2022.html\n\nAI use: None"
+  },
+  {
+    "objectID": "presentations/gp13_slides.html#older-patients-more-often-stay-5-days-or-more-in-every-gender",
+    "href": "presentations/gp13_slides.html#older-patients-more-often-stay-5-days-or-more-in-every-gender",
+    "title": "Who stays in the hospital for 5 days or more? Diabetes encounters by age and gender",
+    "section": "Older patients more often stay 5 days or more, in every gender",
+    "text": "Older patients more often stay 5 days or more, in every gender\n\n\n\nFigure 2"
+  },
+  {
+    "objectID": "presentations/gp13_slides.html#compared-to-what-group-means-barely-differ-next-to-single-encounters",
+    "href": "presentations/gp13_slides.html#compared-to-what-group-means-barely-differ-next-to-single-encounters",
+    "title": "Who stays in the hospital for 5 days or more? Diabetes encounters by age and race",
+    "section": "Compared to what? Group means barely differ next to single encounters",
+    "text": "Compared to what? Group means barely differ next to single encounters\n\n\nFigure 3"
+  },
+  {
+    "objectID": "presentations/gp13_slides.html#in-table-tennis-the-home-player-wins-about-half-of-all-matches",
+    "href": "presentations/gp13_slides.html#in-table-tennis-the-home-player-wins-about-half-of-all-matches",
+    "title": "Who stays in the hospital for 5 days or more? Diabetes encounters by age and race",
+    "section": "In table tennis, the home player wins about half of all matches",
+    "text": "In table tennis, the home player wins about half of all matches\n\n\nFigure 4"
+  },
+  {
+    "objectID": "presentations/gp13_slides.html#older-patients-more-often-stay-5-days-or-more-in-every-race",
+    "href": "presentations/gp13_slides.html#older-patients-more-often-stay-5-days-or-more-in-every-race",
+    "title": "Who stays in the hospital for 5 days or more? Diabetes encounters by age and race",
+    "section": "Older patients more often stay 5 days or more, in every race",
+    "text": "Older patients more often stay 5 days or more, in every race\n\n\n\nFigure 2"
   }
 ]

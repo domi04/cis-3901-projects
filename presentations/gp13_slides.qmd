@@ -1,0 +1,140 @@
+---
+# WRITE: What is this about, and who made it? (a title that names your topic)
+title: "Who stays in the hospital for 5 days or more? Diabetes encounters by age and race"
+author: "Dominic Rueck"
+format:
+  revealjs:
+    embed-resources: true
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+<!--
+Edit the code in the script. The report and the slides only read it.
+Your words (findings, headlines, limits) live in the report and the slides.
+
+How these slides work
+- The code lives in scripts/gp13_scales_facets.R. No code is pasted here:
+  code typed into a chunk here is ignored on render (the chunk runs the
+  script's code). Fix plots in the script.
+- A plot appears by naming its chunk: copy a figure chunk below and change
+  ref.label to the chunk's name in the script (a1, a2, a3-chosen, a4, a5,
+  b1, b2, b3, b4, b5).
+- At least 4–5 slides; more are welcome. Copy a "##" block to add one.
+- Replace each WRITE: line with your own words, and each fig-alt with one
+  sentence describing YOUR plot.
+- No speaker notes: anything in "::: notes" is public on the web. Keep it
+  out.
+-->
+
+```{r}
+#| label: project-root
+#| include: false
+# The slides run from presentations/; this makes the code run from the
+# project folder, so the script's paths (data/...) work here too.
+knitr::opts_knit$set(root.dir = normalizePath(".."))
+```
+
+```{r}
+#| label: read-script
+#| include: false
+knitr::read_chunk("scripts/gp13_scales_facets.R")
+```
+
+```{r}
+#| label: run-script
+#| include: false
+#| ref.label:
+#|   - setup
+#|   - helpers
+#|   - data
+#|   - a0
+#|   - a1
+#|   - a2
+#|   - a3
+#|   - a3-chosen
+#|   - a4
+#|   - a5
+#|   - b1
+#|   - b2
+#|   - b3
+#|   - b4
+#|   - b5
+```
+
+## Task 0: see it update
+
+<!-- Task 0 (kickoff): find your new title word here. You can remove this
+slide after the kickoff. -->
+
+```{r}
+#| label: fig-a0
+#| ref.label: a0
+#| fig-alt: "Bar chart counting the rows in each group of one column."
+```
+
+## Question
+
+<!-- One sentence, naming the groups you compare. -->
+
+Of each age group, what share has a hospital stay of 5 or more days, and does
+this differ between women and men?
+
+## Data
+
+<!-- Where it's from, what one row is, how many rows. -->
+
+- **Fairness:** Diabetes Hospital, 1999-2008. One row is one hospital
+  encounter of a patient with diabetes. My file has
+  `r scales::comma(nrow(fairness))` rows.
+- **Sports:** Setka Cup table tennis. One row is one match. My file has
+  `r scales::comma(nrow(sports))` rows.
+
+## Older patients more often stay 5 days or more, in every race 
+
+<!-- State the finding in one sentence as this slide's heading, then the
+figure. By default it shows your A3 plot, the version you chose. -->
+
+```{r}
+#| label: fig-headline
+#| ref.label: a3-chosen
+#| fig-alt: "Panels for each race show the share of encounters with a stay of 5 or more days by age group, with the same y-axis in every panel: the share is highest in the oldest age group."
+```
+
+## Compared to what? Group means barely differ next to single encounters
+
+```{r}
+#| label: fig-a4
+#| ref.label: a4
+#| fig-alt: "Two panels with the same axes: individual lab procedure counts of female and male encounters overlap almost completely, while the resampled group means form narrow bands near 16 procedures."
+```
+
+## In table tennis, the home player wins about half of all matches
+
+```{r}
+#| label: fig-b1
+#| ref.label: b1
+#| fig-alt: "Horizontal bars for matches of 3, 4 and 5 sets, each split into home wins and away wins, with about half of the matches won by the home player in every group."
+```
+
+## What it shows, and its limits
+
+- The share of long stays differs by age group, and the pattern looks the
+  same for all of the races. This describes a difference, not a cause.
+- A stay of 5 or more days is my own cutoff, and the data cover US hospitals
+  from 1999 to 2008, so they say nothing about today.
+- In the Sports data, "home player" probably only means the first-listed
+  player, so a 50% win rate is not evidence for a real home advantage.
+
+
+## Sources and AI use
+
+<!-- Data citation; one-line AI statement (or "none"). -->
+
+**Fairness:** Clore, J., Cios, K., DeShazo, J., & Strack, B. (2014). Diabetes 130-US Hospitals for Years 1999-2008 [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C5230J.
+
+**Sports:** Cassidy, G. (2024, July 17). Setka table tennis dataset – SCORE sports data repository. Scorenetwork.Org. https://data.scorenetwork.org/table_tennis/table_tennis_sept2022.html
+
+- AI use: None

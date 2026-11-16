@@ -1,0 +1,397 @@
+---
+title: "Guided Project: Scales and Facets"
+subtitle: "CIS-3901 · Module 13"
+author: "Dominic Rueck"
+date: today
+format:
+  html:
+    toc: true
+    code-fold: false
+    embed-resources: true
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+::: {.callout-important}
+## Edit the code in the script. The report and the slides only read it.
+
+The code lives in `scripts/gp13_scales_facets.R`. Your words (findings,
+headlines, limits) live in the report and the slides. Keep the code chunks
+here empty: on render, each one runs the script's code, so code typed into
+them is ignored. Fix the code in the script.
+:::
+
+```{r}
+#| label: project-root
+#| include: false
+# The report runs from reports/; this makes the code run from the project
+# folder, so the script's paths (data/...) work here too.
+knitr::opts_knit$set(root.dir = normalizePath(".."))
+```
+
+```{r}
+#| label: read-script
+#| include: false
+# All the code lives in the script. Each empty chunk below takes the code
+# with that "## ---- name ----" label there, and shows it with its output.
+knitr::read_chunk("scripts/gp13_scales_facets.R")
+```
+
+```{r}
+#| label: setup
+#| include: false
+```
+
+```{r}
+#| label: helpers
+#| include: false
+```
+
+<!--
+How to use this template
+- Replace every line that starts with "WRITE:" with your own sentences.
+- Replace "Your Name" above (a first name or initials is fine: this page is
+  public).
+- Replace each fig-alt with one sentence describing what YOUR plot shows.
+- Change code only in the script, never here: code typed into a chunk here
+  is ignored on render (the chunk runs the script's code).
+- Render, then commit and push (Guided Project page).
+- Draft: tasks 0-5 with your WRITE answers. Final: revise with Module 14's
+  ideas and fill in the Revision log near the end.
+-->
+
+## My data
+
+**Fairness: Diabetes Hospital**. Each row is one hospital encounter. There are 5,000 rows.
+**Sports: Setka Cup table tennis**. Each row is one match between two players. There are 10,000 rows.
+
+```{r}
+#| label: data
+#| echo: true
+```
+
+## Part A · Fairness
+
+### A0 · See it update
+
+```{r}
+#| label: fig-a0
+#| ref.label: a0
+#| echo: true
+#| fig-cap: "My first plot: a count of one of my Fairness columns."
+#| fig-alt: "Bar chart counting the rows in each group of one column."
+```
+
+```{r}
+#| label: a0-check
+#| include: false
+```
+
+Yes, I changed one word in the title of a0 in the script, and the new title
+shows up both here and in my slides.
+
+### A1 · Label it
+
+```{r}
+#| label: fig-a1
+#| ref.label: a1
+#| echo: true
+#| fig-cap: "Share of each group with the outcome, labeled for a reader."
+#| fig-alt: "Horizontal bars show, for each of three age groups, the share of encounters with a hospital stay of 5 or more days: the share is highest for people over 60 and lowest for people aged 30 or younger."
+```
+
+```{r}
+#| label: a1-check
+#| include: false
+```
+
+I changed the title most. The first version only named the topic, and now it
+says what a reader can see in the plot. The subtitle names the data, and the axis and legend titles explain the share and the
+outcome (a stay of 5 or more days), so a reader can understand the plot
+without me there.
+
+### A2 · Choose a scale
+
+```{r}
+#| label: fig-a2
+#| ref.label: a2
+#| echo: true
+#| fig-cap: "My scale choice."
+#| fig-alt: "Histogram of hospital stay lengths from 1 to 14 days, with the counts on a log scale, falling from about 870 encounters at 3 days to about 45 encounters at 14 days."
+```
+
+```{r}
+#| label: a2-check
+#| include: false
+```
+
+I used a log scale on the y-axis (the number of encounters) because the stay
+lengths are right-skewed: short stays are common and long ones are rare. With
+the log scale a reader can see that even the rare long stays (about 45
+encounters at 14 days) are present next to the common ones (about 870 at 3
+days). The trade-off is that the bars start at 1 instead of 0, so their
+lengths no longer show the counts directly, and a linear scale shows the skew
+more clearly. No values were removed by the filter (0 rows had a stay of 0
+days or less).
+
+### A3 · Facet it: fixed or free
+
+```{r}
+#| label: fig-a3
+#| ref.label: a3
+#| echo: true
+#| fig-cap: "The same rates in panels: fixed and free y-axes."
+#| fig-subcap: ["Fixed", "Free"]
+#| fig-alt: "Six sets of panels, one for each race, show the share of encounters with a stay of 5 or more days by age group, once with the same y-axis in every panel and once with a separate y-axis for each panel."
+#| layout: [[1, 1]]
+```
+
+```{r}
+#| label: a3-chosen
+#| include: false
+```
+
+```{r}
+#| label: tbl-a3
+#| tbl-cap: "Each group's n and rate, by panel."
+#| echo: false
+knitr::kable(a3_rates, digits = 3)
+```
+
+```{r}
+#| label: a3-check
+#| include: false
+```
+
+I chose fixed axes. With the same y-axis in every panel, a reader can compare
+the races directly, and a small panel is not stretched to look as important
+as a large one. With free axes the reader gains more detail in each panel but
+loses the direct comparison, because the same bar height means different
+rates in different panels.
+
+### A4 · Compared to what?
+
+```{r}
+#| label: fig-a4
+#| ref.label: a4
+#| echo: true
+#| fig-cap: "Two groups: individual values and resampled means, same axes."
+#| fig-alt: "Two panels with the same axes: individual lab procedure counts of female and male encounters overlap almost completely between about 1 and 70, while the resampled group means form narrow bands near 16 procedures, with female slightly above male."
+```
+
+```{r}
+#| label: a4-check
+#| include: false
+```
+
+I chose the number of lab procedures per encounter, because it is a count
+with a wide spread. The individual values of the two genders overlap almost
+completely, from about 1 to 70 procedures, while the 200 resampled means form
+narrow bands around 16 that sit only slightly apart. This means the group
+means are measured precisely, but the gap between them is small compared with
+the differences between single encounters, so knowing the gender says very
+little about one encounter. I left out the 2 encounters with unknown gender,
+because a resampled mean of 2 values would not mean much.
+
+### A5 · Color for every reader
+
+```{r}
+#| label: fig-a5
+#| ref.label: [a5, a5-simulated]
+#| echo: true
+#| fig-cap: "My colors, with a second cue, and how a reader with red-green color blindness might see them."
+#| fig-subcap: ["My plot", "Red-green (deuteranopia), simulated"]
+#| fig-alt:
+#|   - "Horizontal bars count the encounters in each of three age groups, each group in its own color."
+#|   - "The same plot in the colors a reader with red-green color blindness (deuteranopia) might see."
+#| layout-ncol: 2
+```
+
+```{r}
+#| label: a5-colors
+#| echo: true
+```
+
+```{r}
+#| label: fig-a5-views
+#| ref.label: a5-other-views
+#| echo: true
+#| fig-cap: "The other two simulated views."
+#| fig-subcap: ["Red-green (protanopia), simulated", "Blue-yellow (approximate), simulated"]
+#| fig-alt:
+#|   - "The same plot in the colors a reader with red-green color blindness (protanopia) might see."
+#|   - "The same plot in the colors a reader with blue-yellow color blindness might see (an approximation)."
+#| layout-ncol: 2
+```
+
+```{r}
+#| label: a5-check
+#| include: false
+```
+
+I colored the bars by age group, which has only three categories, so every
+group can get its own color from the viridis scale. The age group is also on
+the y-axis, so color is never the only cue. In the simulated plots I can still tell the three bars apart, and the labels on the y-axis tell me which is which.
+
+## Part B · Sports
+
+### B1 · Label it
+
+```{r}
+#| label: fig-b1
+#| ref.label: b1
+#| echo: true
+#| fig-cap: "My Sports plot, labeled for a reader."
+#| fig-alt: "Horizontal bars for matches of 3, 4 and 5 sets, each split into home wins and away wins, with about half of the matches won by the home player in every group."
+```
+
+```{r}
+#| label: b1-check
+#| include: false
+```
+
+The plot shows that the home player won about 50% of the matches in every
+group, whether the match lasted 3, 4 or 5 sets. The title helps a reader most, because it states this finding instead of only naming the columns.
+
+### B2 · Choose a scale
+
+```{r}
+#| label: fig-b2
+#| ref.label: b2
+#| echo: true
+#| fig-cap: "My scale choice."
+#| fig-alt: "Histogram of the total points in game 1 with the number of matches on a log scale: most matches fall between 17 and 20 points, and the counts fall steadily toward a few matches with up to 44 points."
+```
+
+```{r}
+#| label: b2-check
+#| include: false
+```
+
+used a log scale on the y-axis (the number of matches). The points in game 1 are right-skewed: most games end near 18 points, and a few long games with many deuces run much higher, up to 44 points. On a linear count axis the bars for the rare long games would be almost invisible next to the tall bars near 18. The log scale makes these rare games visible, and it does not make the common short games look extremely large. The trade-off is that the bars on a log axis no longer show the counts directly, and bins with only 1 match have a bar of length zero, which is why some bars seem to be missing (the subtitle explains this). No values were removed, because every game has at least 11 points (0 rows removed).
+
+### B3 · Facet it: fixed or free
+
+```{r}
+#| label: fig-b3
+#| ref.label: b3
+#| echo: true
+#| fig-cap: "The same plot in panels: fixed and free y-axes."
+#| fig-subcap: ["Fixed", "Free"]
+#| fig-alt: "Two sets of bar panels for matches won by the away and the home player show the mean points in game 1 for 3, 4 and 5 sets, all near 18 to 19 points, once with the same y-axis and once with free y-axes."
+#| layout: [[1, 1]]
+```
+
+```{r}
+#| label: b3-check
+#| include: false
+```
+
+I chose fixed axes. The two versions look almost the same, because bars
+start at 0 and all the means are between about 18 and 19 points, so free axes
+add no detail. Fixed axes keep the two panels directly comparable and show
+that who won the match makes almost no difference to the mean of game 1. Both
+panels are large (n = 3,952 for the away player and n = 3,899 for the home
+player), so there is no small-panel problem here. In both panels the means
+for 4 and 5 sets are slightly higher than for 3 sets, by a few tenths of a
+point.
+
+### B4 · Compared to what?
+
+```{r}
+#| label: fig-b4
+#| ref.label: b4
+#| echo: true
+#| fig-cap: "Two groups: individual values and resampled means, same axes."
+#| fig-alt: "Two panels with the same axes: the individual points of game 1 for matches won by the away and by the home player overlap almost completely, while the resampled means form narrow bands near 18.7 points."
+```
+
+```{r}
+#| label: b4-check
+#| include: false
+```
+
+The clouds of the two groups overlap almost completely, both for the
+individual values and for the resampled means. The individual games range
+from 11 to 44 points, while the resampled means form narrow bands near 18.7 points. This means the group means are measured precisely, but the difference between them, if there is one, is tiny compared with the differences between single games, so who won the match tells us almost nothing about the points in game 1.
+
+### B5 · Color for every reader
+
+```{r}
+#| label: fig-b5
+#| ref.label: [b5, b5-simulated]
+#| echo: true
+#| fig-cap: "My colors, with a second cue, and how a reader with red-green color blindness might see them."
+#| fig-subcap: ["My plot", "Red-green (deuteranopia), simulated"]
+#| fig-alt:
+#|   - "Horizontal bars count the matches with 3, 4 and 5 sets played, each group in its own color."
+#|   - "The same plot in the colors a reader with red-green color blindness (deuteranopia) might see."
+#| layout-ncol: 2
+```
+
+```{r}
+#| label: b5-colors
+#| echo: true
+```
+
+```{r}
+#| label: fig-b5-views
+#| ref.label: b5-other-views
+#| echo: true
+#| fig-cap: "The other two simulated views."
+#| fig-subcap: ["Red-green (protanopia), simulated", "Blue-yellow (approximate), simulated"]
+#| fig-alt:
+#|   - "The same plot in the colors a reader with red-green color blindness (protanopia) might see."
+#|   - "The same plot in the colors a reader with blue-yellow color blindness might see (an approximation)."
+#| layout-ncol: 2
+```
+
+```{r}
+#| label: b5-check
+#| include: false
+```
+
+I colored the bars by the number of sets played, which has three categories (3, 4 and 5), so each can get its own viridis color. The sets are also on the y-axis, so color is not the only cue. In the simulated plots I can still tell the three bars apart.
+
+## One thing I tried in my slides, and why
+
+I put my headline plot first and said what it shows in the title of the slide, so a reader sees the finding before the details. For the limits, I added one slide that says what the data can and cannot show, for example that the home-win rate says nothing about a real home advantage, because the home player may only be the first-listed player. This helps a reader judge how far to trust the finding.
+
+## Revision log
+
+<!-- Leave this empty for the draft; the page renders with it empty. -->
+
+Fill this in for the final: three to five changes to your report or slides.
+For each: what changed, why, and which idea from Module 14 it uses.
+
+| Change | Why | Module 14 idea |
+|---|---|---|
+| | | |
+| | | |
+| | | |
+
+## Checks
+
+```{r}
+#| label: checks-table
+#| include: false
+```
+
+```{r}
+#| label: tbl-checks
+#| tbl-cap: "Every task's check, at the time this page was rendered."
+#| echo: false
+knitr::kable(checks_table)
+```
+
+## AI use
+
+AI use: None
+
+## References
+
+**Fairness:** Clore, J., Cios, K., DeShazo, J., & Strack, B. (2014). Diabetes 130-US Hospitals for Years 1999-2008 [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C5230J.
+
+**Sports:** Cassidy, G. (2024, July 17). Setka table tennis dataset – SCORE sports data repository. Scorenetwork.Org. https://data.scorenetwork.org/table_tennis/table_tennis_sept2022.html
