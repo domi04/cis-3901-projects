@@ -11,24 +11,6 @@ execute:
   message: false
 ---
 
-<!--
-Edit the code in the script. The report and the slides only read it.
-Your words (findings, headlines, limits) live in the report and the slides.
-
-How these slides work
-- The code lives in scripts/gp13_scales_facets.R. No code is pasted here:
-  code typed into a chunk here is ignored on render (the chunk runs the
-  script's code). Fix plots in the script.
-- A plot appears by naming its chunk: copy a figure chunk below and change
-  ref.label to the chunk's name in the script (a1, a2, a3-chosen, a4, a5,
-  b1, b2, b3, b4, b5).
-- At least 4–5 slides; more are welcome. Copy a "##" block to add one.
-- Replace each WRITE: line with your own words, and each fig-alt with one
-  sentence describing YOUR plot.
-- No speaker notes: anything in "::: notes" is public on the web. Keep it
-  out.
--->
-
 ```{r}
 #| label: project-root
 #| include: false
@@ -62,17 +44,6 @@ knitr::read_chunk("scripts/gp13_scales_facets.R")
 #|   - b3
 #|   - b4
 #|   - b5
-```
-
-## Task 0: see it update
-
-<!-- Task 0 (kickoff): find your new title word here. You can remove this
-slide after the kickoff. -->
-
-```{r}
-#| label: fig-a0
-#| ref.label: a0
-#| fig-alt: "Bar chart counting the rows in each group of one column."
 ```
 
 ## Question
@@ -111,7 +82,7 @@ figure. By default it shows your A3 plot, the version you chose. -->
 #| fig-alt: "Two panels with the same axes: individual lab procedure counts of female and male encounters overlap almost completely, while the resampled group means form narrow bands near 16 procedures."
 ```
 
-## In table tennis, the home player wins about half of all matches
+## Quick change of scenery: In table tennis, the home player wins about half of all matches
 
 ```{r}
 #| label: fig-b1
